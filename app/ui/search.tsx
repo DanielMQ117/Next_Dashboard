@@ -2,24 +2,28 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function Search({ placeholder }: { placeholder: string }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
-        const value = event.target.value;
-        const params = new URLSearchParams(searchParams);
+    const handleSearch = useDebouncedCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = event.target.value;
+            const params = new URLSearchParams(searchParams);
 
-        if (value) {
-            params.set("query", value);
-        } else {
-            params.delete("query");
-        }
-        replace(`${pathname}?${params.toString()}`);
-        console.log(value);
-    }
+            if (value) {
+                params.set("query", value);
+            } else {
+                params.delete("query");
+            }
+            replace(`${pathname}?${params.toString()}`);
+            console.log(value);
+        },
+        500 // Ejecutar funcion si el usuario deja de escribir 500 milisegundos
+    );
 
     return (
         <div className="relative flex flex-1 flex-shrink-0">

@@ -55,3 +55,8 @@ export async function updateInvoice(id: string, formData: FormData) {
     revalidatePath("/dashboard/invoices"); // Borrar el caché del cliente y realizar una nueva solicitud al servidor
     redirect("/dashboard/invoices"); // Redirigir al usuario a la página de Facturas
 }
+
+export async function deleteInvoice(id: string) {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath("/dashboard/invoices");
+}
